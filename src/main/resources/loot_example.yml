@@ -1,0 +1,87 @@
+# The first section's name is the name of the loot table if this defined in loot_tables.yml
+# If you create a separate file for the loot table in the 'loot_tables' directory, the name of the table will be the file name without '.yml'.
+'awesome':
+  # This section garauntees a diamond pick with silk touch.
+  # The name of the section doesn't matter, as long as it does not use the predefined keywords as specified in loot_tables.yml.
+  'enchanted diamond pick':
+    # item id for diamond
+    id: 278
+    # This is an enchant section where specifcs of the enchantment are defined.
+    # This section is passed down to all children of the parent (ie 'enchanted diamond pick') unless overriden in those children.
+    enchant:
+      name: silk_touch
+  # One again, just another name you can make up that has no bearing on how this table works.
+  'enchanted sword of some sort':
+    # This indicates that there's only a 50% chance of this item being added.
+    chance: .50
+    # This indicates that only ONE of the child sections of this (item and enchantment definitions) will be chosen.
+    # This also means that chance values for those child sections will function more like a weighting system.
+    split: true
+    diamond:
+      # No chance is defined here, which means it has a default value of 1.
+      id: 276
+    iron:
+      id: 267
+    wood:
+      # Since this is set as 2, and the parent's 'split' is 'true', this means it's weight is twice as much as the default (1).
+      # This means that this section is twice as likely to be picked.
+      chance: 2
+      id: 268
+      enchant:
+        # Setting safe to false means that any enchant can be applied to any item instead of only allowing enchants that are actually meant for the item.
+        # This enchant section also overrides the one give to the parent section which is defined below.
+        safe: false
+        name: silk_touch
+      # Here we have added a section along with an item (which is perfectly okay)
+      # When the 'wood' section is chose, you will get a silk touch wood sword and then this section has a 10% chance of being added as well.
+      'mossy stone':
+        chance: .10
+        id: 98
+        # Here, a data value for an item is applied, this turns the regular stone brick (98) into mossy stone brick.
+        data: 1
+        # This means that when this section is picked, 20 of the defined item will be given.
+        amount: 20
+        # Since children inherit their parents enchant section, adding one like this make sure this item will not be enchanted
+        enchant: { }
+    # Notice this enchant section has child enchant sections, they can be named as you please in this case.
+    # Child enchants will inherit enchant properties of their parent enchant if they are not overriden in the child.
+    enchant:
+      # Rolls defines how many times this section should be rolled for.  In this case, it means 2 enchantments will be picked (unless the same is picked twice).
+      rolls: 2
+      # Split being true means it will only choose one of the below enchantments.
+      split: true
+      # This causes all the child enchants to be unsafe unless otherwise specified.
+      safe: false
+      fire:
+        name: fire_aspect
+        # Here, the level of the enchantment is defined as 2.  By default, level 1 is chosen.
+        level: 2
+      sharpness:
+        name: damage_all
+        # Here, we us a range which indicates that a random enchant level between 3 and 5.
+        level: 3-5
+      knockback:
+        name: knockback
+      silk_touch:
+        name: silk_touch
+  'some diamond or gold':
+    # This section is checked 10 times but only has a 10% chance of being picked.
+    # That means you may not get this or you may get it 10 times, but the odds favor lower sucessful numbers.
+    # Getting once is 10% chance, twice is 1% chance, three times .1% chance and so on.
+    rolls: 10
+    chance: .10
+    split: true
+    diamond:
+      # Since split is true in the parent, diamond is 5 times more likely to be picked than gold, but gold gives between 1-5 bars.
+      chance: 5
+      id: 264
+    gold:
+      chance: 1
+      id: 266
+      amount: 1-5
+  # Again, the section titles don't matter, they can be numbers!
+  4:
+    chance: .10
+    id: 98
+    data: 2
+    amount: 20

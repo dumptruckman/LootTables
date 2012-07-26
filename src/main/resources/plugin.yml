@@ -1,0 +1,14 @@
+name: LootTables
+main: com.dumptruckman.minecraft.loottables.LootTables
+version: maven-version-number
+author: dumptruckman
+
+commands:
+  loot:
+    description: Tests the primary script file
+    usage: /<command> {loot table} [recipient]
+    permission: loottables.loot
+
+permissions:
+  loottables.loot:
+    default: OP
