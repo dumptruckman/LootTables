@@ -32,31 +32,36 @@ public class LootTables extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length < 1 || args.length > 2) {
-            return false;
-        }
-        Player player = null;
-        if (sender instanceof Player) {
-            player = (Player) sender;
-        }
-        if (args.length == 1 && player == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "You must be in game to send loot tables to your self or you must specify a recipient!");
-            return false;
-        }
-        if (args.length == 2) {
-            player = getServer().getPlayer(args[1]);
-            if (player == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "'" + ChatColor.RED + args[1] + ChatColor.DARK_RED + "' does not seem to be online!");
+        if (label.equalsIgnoreCase("loot")) {
+            if (args.length < 1 || args.length > 2) {
+                return false;
+            }
+            Player player = null;
+            if (sender instanceof Player) {
+                player = (Player) sender;
+            }
+            if (args.length == 1 && player == null) {
+                sender.sendMessage(ChatColor.DARK_RED + "You must be in game to send loot tables to your self or you must specify a recipient!");
+                return false;
+            }
+            if (args.length == 2) {
+                player = getServer().getPlayer(args[1]);
+                if (player == null) {
+                    sender.sendMessage(ChatColor.DARK_RED + "'" + ChatColor.RED + args[1] + ChatColor.DARK_RED + "' does not seem to be online!");
+                    return true;
+                }
+            }
+            LootTable table = loot.getLootTable(args[0]);
+            if (table == null) {
+                sender.sendMessage(ChatColor.DARK_RED + "'" + ChatColor.RED + args[0] + ChatColor.DARK_RED + "' is not a valid loot table!");
                 return true;
             }
+            table.addToInventory(player.getInventory());
+            sender.sendMessage(ChatColor.DARK_GREEN + "Gave loot table '" + ChatColor.GREEN + table.getName() + ChatColor.DARK_GREEN + "' to '" + ChatColor.GREEN + player.getName() + ChatColor.DARK_GREEN + "'!");
+        } else if (label.equalsIgnoreCase("lootreload")) {
+            loot = new DefaultLootConfig(this, getLogger());
+            sender.sendMessage(ChatColor.DARK_GREEN + "=== Reloaded LootTables! ===");
         }
-        LootTable table = loot.getLootTable(args[0]);
-        if (table == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "'" + ChatColor.RED + args[0] + ChatColor.DARK_RED + "' is not a valid loot table!");
-            return true;
-        }
-        table.addToInventory(player.getInventory());
-        sender.sendMessage(ChatColor.DARK_GREEN + "Gave loot table '" + ChatColor.GREEN + table.getName() + ChatColor.DARK_GREEN + "' to '" + ChatColor.GREEN + player.getName() + ChatColor.DARK_GREEN + "'!");
         return true;
     }
 

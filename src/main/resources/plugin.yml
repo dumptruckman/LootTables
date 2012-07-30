@@ -8,7 +8,18 @@ commands:
     description: Tests the primary script file
     usage: /<command> {loot table} [recipient]
     permission: loottables.loot
+  lootreload:
+    description: Clears the loot table cache so changes in yaml files are detected.
+    usage: /<command>
+    permission: loottables.reload
 
 permissions:
+  loottables.*:
+    default: OP
+    children:
+      loottables.loot: true
+      loottables.reload: true
   loottables.loot:
+    default: OP
+  loottables.reload:
     default: OP
