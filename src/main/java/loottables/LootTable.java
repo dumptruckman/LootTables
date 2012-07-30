@@ -1,4 +1,4 @@
-package com.dumptruckman.minecraft.loottables;
+package loottables;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;

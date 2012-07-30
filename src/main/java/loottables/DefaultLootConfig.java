@@ -1,4 +1,4 @@
-package com.dumptruckman.minecraft.loottables;
+package loottables;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

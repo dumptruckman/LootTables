@@ -1,6 +1,6 @@
-package com.dumptruckman.minecraft.loottables;
+package loottables;
 
-import com.dumptruckman.minecraft.loottables.LootTable.ItemSection;
+import loottables.LootTable.ItemSection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;

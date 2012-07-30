@@ -1,4 +1,4 @@
-package com.dumptruckman.minecraft.loottables;
+package loottables;
 
 /**
  * An interface for retrieving a loot table from loot_tables.yml or from an individual loot table file.

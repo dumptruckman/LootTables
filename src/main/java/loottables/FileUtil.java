@@ -1,4 +1,4 @@
-package com.dumptruckman.minecraft.loottables;
+package loottables;
 
 import java.io.File;
 import java.io.FileOutputStream;
