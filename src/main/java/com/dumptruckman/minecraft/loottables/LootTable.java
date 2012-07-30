@@ -98,19 +98,14 @@ public interface LootTable {
         Enchantment getEnchantment();
 
         /**
-         * @return A random level for the enchant between {@link #getMinLevel()} and {@link #getMaxLevel()} inclusive.
+         * @return A random level for the enchant chosen from {@link #getLevels()}
          */
         int getLevel();
 
         /**
-         * @return The minimum level for this enchant.
+         * @return The array of possible levels.
          */
-        int getMinLevel();
-
-        /**
-         * @return The maximum level for this enchant.
-         */
-        int getMaxLevel();
+        int[] getLevels();
 
         /**
          * @return true if the enchantment should be applied safely.

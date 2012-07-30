@@ -230,15 +230,13 @@ class DefaultLootTable implements LootTable, ItemSection {
         protected String name;
 
         // Related to items
-        protected int itemId = 0;
-        protected short itemData = 0;
-        protected int minAmount = 1;
-        protected int maxAmount = 1;
+        protected int[] itemId = {0};
+        protected int[] itemData = {0};
+        protected int[] itemAmount = {1};
 
         // Related to enchants
         protected String enchantName = "";
-        protected int minLevel = 1;
-        protected int maxLevel = 1;
+        protected int[] enchantLevel = {1};
         protected boolean enchantSafe = true;
 
         DefaultLootSection(String name, ConfigurationSection section, Logger log) {
@@ -249,8 +247,7 @@ class DefaultLootTable implements LootTable, ItemSection {
             if (enchantParent != null && enchantParent instanceof EnchantSection) {
                 EnchantSection parentEnchant = (EnchantSection) enchantParent;
                 this.enchantName = parentEnchant.getEnchantName();
-                this.minLevel = parentEnchant.getMinLevel();
-                this.maxLevel = parentEnchant.getMaxLevel();
+                this.enchantLevel = parentEnchant.getLevels();
                 this.enchantSafe = parentEnchant.isSafe();
             }
             this.name = name;
@@ -263,24 +260,11 @@ class DefaultLootTable implements LootTable, ItemSection {
                 if (key.equalsIgnoreCase("rolls")) {
                     rolls = section.getInt("rolls", 1);
                 } else if (key.equalsIgnoreCase("id")) {
-                    itemId = section.getInt("id", 0);
+                    itemId = parseValues(section.get("id"), 0);
                 } else if (key.equalsIgnoreCase("data")) {
-                    itemData = (short) section.getInt("data", 0);
+                    itemData = parseValues(section.get("data"), 0);
                 } else if (key.equalsIgnoreCase("amount")) {
-                    // Allow for amount ranges.
-                    String amountString = section.getString("amount");
-                    if (amountString.contains("-")) {
-                        String[] minMaxString = amountString.split("-");
-                        try {
-                            maxAmount = Integer.valueOf(minMaxString[1]);
-                            minAmount = Integer.valueOf(minMaxString[0]);
-                        } catch (NumberFormatException e) {
-                            log.warning("[LootTable] " + section.getCurrentPath() + "." + key + " contains an invalid entry");
-                        }
-                    } else {
-                        minAmount = section.getInt("amount", 1);
-                        maxAmount = minAmount;
-                    }
+                    itemAmount = parseValues(section.get("amount"), 1);
                 } else if (key.equalsIgnoreCase("chance")) {
                     chance = (float) section.getDouble("chance", 1);
                 } else if (key.equalsIgnoreCase("split")) {
@@ -288,20 +272,7 @@ class DefaultLootTable implements LootTable, ItemSection {
                 } else if (key.equalsIgnoreCase("name")) {
                     enchantName = section.getString("name", "");
                 } else if (key.equalsIgnoreCase("level")) {
-                    // Allow for level ranges.
-                    String levelString = section.getString("level");
-                    if (levelString.contains("-")) {
-                        String[] minMaxString = levelString.split("-");
-                        try {
-                            maxLevel = Integer.valueOf(minMaxString[1]);
-                            minLevel = Integer.valueOf(minMaxString[0]);
-                        } catch (NumberFormatException e) {
-                            log.warning("[LootTable] " + section.getCurrentPath() + "." + key + " contains an invalid entry");
-                        }
-                    } else {
-                        minLevel = section.getInt("level", 1);
-                        maxLevel = minLevel;
-                    }
+                    enchantLevel = parseValues(section.get("level"), 1);
                 } else if (key.equalsIgnoreCase("safe")) {
                     enchantSafe = section.getBoolean("safe", true);
                 } else {
@@ -378,15 +349,26 @@ class DefaultLootTable implements LootTable, ItemSection {
 
         @Override
         public ItemStack getItem() {
-            int amount;
-            if (minAmount == maxAmount) {
-                amount = minAmount;
+            int id;
+            if (itemId.length == 1) {
+                id = itemId[0];
             } else {
-                amount = randGen.nextInt(maxAmount - minAmount + 1) + minAmount;
-                log.finest("Random amount of '" + itemId + "': " + amount);
+                id = itemId[randGen.nextInt(itemId.length)];
             }
-            if (itemId > 0 && amount > 0 && itemData >= 0) {
-                return new ItemStack(itemId, amount, itemData);
+            int amount;
+            if (itemAmount.length == 1) {
+                amount = itemAmount[0];
+            } else {
+                amount = itemAmount[randGen.nextInt(itemAmount.length)];
+            }
+            int data;
+            if (itemData.length == 1) {
+                data = itemData[0];
+            } else {
+                data = itemData[randGen.nextInt(itemData.length)];
+            }
+            if (id > 0 && amount > 0 && data >= 0) {
+                return new ItemStack(id, amount, (short) data);
             }
             return null;
         }
@@ -425,23 +407,17 @@ class DefaultLootTable implements LootTable, ItemSection {
         @Override
         public int getLevel() {
             int level;
-            if (minLevel == maxLevel) {
-                level = minLevel;
+            if (enchantLevel.length == 1) {
+                level = enchantLevel[0];
             } else {
-                level = randGen.nextInt(maxLevel - minLevel + 1) + minLevel;
-                log.finest("Random level of '" + enchantName + "': " + level);
+                level = enchantLevel[randGen.nextInt(enchantLevel.length)];
             }
             return level;
         }
 
         @Override
-        public int getMinLevel() {
-            return minLevel;
-        }
-
-        @Override
-        public int getMaxLevel() {
-            return maxLevel;
+        public int[] getLevels() {
+            return enchantLevel;
         }
 
         @Override
@@ -452,6 +428,65 @@ class DefaultLootTable implements LootTable, ItemSection {
         @Override
         public String toString() {
             return "[EnchantSection] " + name;
+        }
+    }
+
+    private static int[] parseValues(Object obj, int def) {
+        List<Integer> result = _parseValues(obj);
+        if (result.isEmpty()) {
+            result.add(def);
+        }
+        int[] res = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            res[i] = result.get(i);
+        }
+        return res;
+    }
+
+    private static List<Integer> _parseValues(Object obj) {
+        if (obj instanceof Integer) {
+            List<Integer> res = new ArrayList<Integer>(1);
+            res.add((Integer) obj);
+            return res;
+        } else if (obj instanceof String) {
+            String string = (String) obj;
+            if (string.contains(",")) {
+                String[] parts = ((String) obj).split(",");
+                ArrayList<Integer> res = new ArrayList<Integer>(parts.length);
+                for (String part : parts) {
+                    part = part.trim();
+                    try {
+                        res.add(Integer.valueOf(part));
+                    } catch (NumberFormatException e) {
+                        res.addAll(_parseValues(part));
+                    }
+                }
+                return res;
+            } else if (string.contains("-")) {
+                String[] parts = ((String) obj).split("-");
+                int min = 1;
+                int max = 1;
+                try {
+                    max = Integer.valueOf(parts[1].trim());
+                    min = Integer.valueOf(parts[0].trim());
+                } catch (NumberFormatException ignore) { }
+                ArrayList<Integer> res = new ArrayList<Integer>(max - min + 1);
+                for (int i = min; i <= max; i++) {
+                    res.add(i);
+                }
+                return res;
+            } else {
+                return new ArrayList<Integer>(0);
+            }
+        } else if (obj instanceof List) {
+            List list = (List) obj;
+            List<Integer> res = new ArrayList<Integer>(list.size());
+            for (Object o : list) {
+                res.addAll(_parseValues(o));
+            }
+            return res;
+        } else {
+            return new ArrayList<Integer>(0);
         }
     }
 }
