@@ -1,12 +1,14 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package loottables;
+package com.dumptruckman.minecraft.loottables.plugin;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,28 +21,30 @@ import java.util.logging.Logger;
 
 class DefaultLootConfig implements LootConfig {
 
-    private Logger log;
-    private FileConfiguration config;
+    @NotNull
+    private final Logger log;
+    @NotNull
+    private final FileConfiguration config;
 
-    private File lootFolder;
-    private File configFile;
+    @NotNull
+    private final File lootFolder;
+    @NotNull
+    private final File configFile;
 
     private Map<String, LootTable> cachedTables = new WeakHashMap<String, LootTable>();
 
-    DefaultLootConfig(Plugin plugin, Logger log) {
+    DefaultLootConfig(@NotNull final Plugin plugin, @NotNull final Logger log) {
         this(plugin, new File(plugin.getDataFolder(), "loot_tables.yml"),
                 new File(plugin.getDataFolder(), "loot_example.yml"),
                 new File(plugin.getDataFolder(), "loot_tables"), log);
     }
 
-    DefaultLootConfig(Plugin plugin, File lootTableFile, File exampleFile, File lootFolder, Logger log) {
-        if (lootTableFile == null) {
-            throw new IllegalArgumentException("lootTableFile may not be null!");
-        }
+    DefaultLootConfig(@NotNull final Plugin plugin, @NotNull final File lootTableFile, @NotNull final File exampleFile, @NotNull final File lootFolder, @Nullable final Logger log) {
         if (log == null) {
-            log = Logger.getLogger("Minecraft.LootTables");
+            this.log = Logger.getLogger("Minecraft.LootTables");
+        } else {
+            this.log = log;
         }
-        this.log = log;
         File mainFolder = lootTableFile.getParentFile();
         mainFolder.mkdirs();
         configFile = lootTableFile;
@@ -72,8 +76,8 @@ class DefaultLootConfig implements LootConfig {
                 FileUtil.streamToFile(plugin.getResource("loot_example.yml"), exampleFile);
             }
         } catch (IOException e) {
-            log.severe("Could not save loot_tables.yml!");
-            log.severe("Reason: " + e.getMessage());
+            this.log.severe("Could not save loot_tables.yml!");
+            this.log.severe("Reason: " + e.getMessage());
         }
     }
 
@@ -86,7 +90,7 @@ class DefaultLootConfig implements LootConfig {
             log.fine("Got cached table!");
             return cachedTables.get(name);
         }
-        config = YamlConfiguration.loadConfiguration(configFile);
+        //config = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection section = config.getConfigurationSection(name);
         if (section == null) {
             if (lootFolder != null) {

@@ -1,13 +1,15 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package loottables;
+package com.dumptruckman.minecraft.loottables.plugin;
 
-import loottables.LootTable.ItemSection;
+import com.dumptruckman.minecraft.loottables.plugin.LootTable.ItemSection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -22,20 +24,23 @@ class DefaultLootTable implements LootTable, ItemSection {
 
     private static final int ARRAY_SIZE = 64;
 
-    private ItemSection topSection;
-    private Logger log;
-    private String name;
+    @NotNull
+    private final ItemSection topSection;
+    @NotNull
+    private final Logger log;
+    @NotNull
+    private final String name;
 
     private Random randGen = new Random(System.currentTimeMillis());
 
-    DefaultLootTable(String name, ConfigurationSection section, Logger log) {
+    DefaultLootTable(@NotNull final String name, @NotNull final ConfigurationSection section, @NotNull final Logger log) {
         this.name = name;
         this.log = log;
         topSection = new DefaultItemSection(name, section, log);
     }
 
     @Override
-    public void addToInventory(Inventory inv) {
+    public void addToInventory(@NotNull final Inventory inv) {
         log.finest("Adding loot table to inventory " + topSection.getRolls() + " times");
         for (ItemStack item : generateItems()) {
             inv.addItem(item);
@@ -43,6 +48,7 @@ class DefaultLootTable implements LootTable, ItemSection {
     }
 
     @Override
+    @NotNull
     public ItemStack[] generateItems() {
         randGen = new Random(System.currentTimeMillis());
         List<ItemStack> items = new ArrayList<ItemStack>(ARRAY_SIZE);
@@ -52,6 +58,7 @@ class DefaultLootTable implements LootTable, ItemSection {
         return items.toArray(new ItemStack[items.size()]);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return name;
@@ -191,11 +198,13 @@ class DefaultLootTable implements LootTable, ItemSection {
     }
 
     @Override
+    @NotNull
     public ItemStack getItem() {
         return topSection.getItem();
     }
 
     @Override
+    @NotNull
     public Map<Float, Set<LootSection>> getChildSections() {
         return topSection.getChildSections();
     }
@@ -216,6 +225,7 @@ class DefaultLootTable implements LootTable, ItemSection {
     }
 
     @Override
+    @NotNull
     public EnchantSection getEnchantSection() {
         return topSection.getEnchantSection();
     }
@@ -235,7 +245,8 @@ class DefaultLootTable implements LootTable, ItemSection {
         // Related to items
         protected int[] itemId = {0};
         protected int[] itemData = {0};
-        protected int[] itemAmount = {1};
+        protected int[] itemAmount = {-1};
+        protected ItemStack item = null;
 
         // Related to enchants
         protected String enchantName = "";
@@ -262,6 +273,8 @@ class DefaultLootTable implements LootTable, ItemSection {
             for (String key : section.getKeys(false)) {
                 if (key.equalsIgnoreCase("rolls")) {
                     rolls = section.getInt("rolls", 1);
+                } else if (key.equalsIgnoreCase("item")) {
+                    item = section.getItemStack("item");
                 } else if (key.equalsIgnoreCase("id")) {
                     itemId = parseValues(section.get("id"), 0);
                 } else if (key.equalsIgnoreCase("data")) {
@@ -329,6 +342,7 @@ class DefaultLootTable implements LootTable, ItemSection {
         }
 
         @Override
+        @NotNull
         public Map<Float, Set<LootSection>> getChildSections() {
             return sectionMap;
         }
@@ -351,18 +365,32 @@ class DefaultLootTable implements LootTable, ItemSection {
         }
 
         @Override
+        @Nullable
         public ItemStack getItem() {
-            int id;
-            if (itemId.length == 1) {
-                id = itemId[0];
-            } else {
-                id = itemId[randGen.nextInt(itemId.length)];
-            }
             int amount;
             if (itemAmount.length == 1) {
                 amount = itemAmount[0];
             } else {
                 amount = itemAmount[randGen.nextInt(itemAmount.length)];
+            }
+
+            if (item != null) {
+                ItemStack item = new ItemStack(this.item);
+                if (amount > 0) {
+                    item.setAmount(amount);
+                }
+                return item;
+            }
+
+            if (amount <= 0) {
+                amount = 1;
+            }
+
+            int id;
+            if (itemId.length == 1) {
+                id = itemId[0];
+            } else {
+                id = itemId[randGen.nextInt(itemId.length)];
             }
             int data;
             if (itemData.length == 1) {
@@ -382,6 +410,7 @@ class DefaultLootTable implements LootTable, ItemSection {
         }
 
         @Override
+        @NotNull
         public EnchantSection getEnchantSection() {
             return enchantSection;
         }
@@ -398,11 +427,13 @@ class DefaultLootTable implements LootTable, ItemSection {
         }
 
         @Override
+        @NotNull
         public String getEnchantName() {
             return enchantName;
         }
 
         @Override
+
         public Enchantment getEnchantment() {
             return Enchantment.getByName(enchantName.toUpperCase());
         }

@@ -1,5 +1,5 @@
 name: LootTables
-main: com.dumptruckman.minecraft.loottables.LootTables
+main: com.dumptruckman.minecraft.loottables.plugin.LootTables
 version: maven-version-number
 author: dumptruckman
 
