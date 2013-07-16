@@ -31,33 +31,18 @@ public class WebRequestHandler extends AbstractHandler {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
-        //for (File file : lootTableFolder.listFiles(YAML_FILE_FILTER)) {
-        //    response.getWriter().println(file.getName().substring(0, file.getName().length() - 4));
-        //}
-        System.out.println(LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-/*
-        response.getWriter().write("<object type=\"application/x-java-applet\" height=\"300\" width=\"550\">"
-                //+ "<param name=\"classid\" value=\"com.dumptruckman.minecraft.loottables.server.LootTablesApplet\" />"
-                + "<param name=\"code\" value=\"com.dumptruckman.minecraft.loottables.server.LootTablesApplet.class\" />"
-                + "<PARAM name=\"archive\" value=\" + LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "\">"
-                + "Applet failed to run.  No Java plug-in was found.""
-                + "</object>");
-        */
-        String path = LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
+        String path = "";//LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
         response.getWriter().write("<script src=\"http://java.com/js/deployJava.js\"></script>\n" +
                 "<script>\n" +
                 "    var attributes = {codebase:'.',\n" +
                 "                      code:'com.dumptruckman.minecraft.loottables.server.LootTablesApplet.class',\n" +
-                //"                      archive:'." + path.substring(path.substring(0, path.length() - 1).lastIndexOf("/")) + "',\n" +
                 "                      archive:'." + path.substring(0) + "',\n" +
                 "                      width:710, height:540} ;\n" +
                 "    var parameters = {fontSize:16} ;\n" +
                 "    var version = '1.6' ;\n" +
                 "    deployJava.runApplet(attributes, parameters, version);\n" +
                 "</script>");
-
-
-        //response.getWriter().println("<applet code=\"com.dumptruckman.minecraft.loottables.server.LootTablesApplet\" archive=\"" + LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "\" width=\"800\" height=\"600\"></applet>");
     }
 }
