@@ -216,10 +216,15 @@
                             <filters>
                                 <filter>
                                     <artifact>org.eclipse.*:*</artifact>
-                                    <includes>
-                                        <include>org/**</include>
-                                        <include>javax/**</include>
-                                    </includes>
+                                    <excludes>
+                                        <exclude>plugin.properties</exclude>
+                                        <exclude>jetty-dir.css</exclude>
+                                        <exclude>about.html</exclude>
+                                        <exclude>about_files/</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.inf</exclude>
+                                    </excludes>
                                 </filter>
                             </filters>
                         </configuration>
