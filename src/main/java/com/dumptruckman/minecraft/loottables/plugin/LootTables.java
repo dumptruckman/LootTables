@@ -3,7 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package com.dumptruckman.minecraft.loottables.plugin;
 
-import com.dumptruckman.minecraft.loottables.server.WebServer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,15 +17,12 @@ import java.util.logging.Logger;
 public class LootTables extends JavaPlugin {
 
     private LootConfig loot;
-    private WebServer server = null;
 
     public static void main(String[] args) {
         int magic = 1008813135;
         ByteBuffer b = ByteBuffer.allocate(4);
         b.putInt(magic);
         System.out.println(new String(b.array()));
-        WebServer server = new WebServer(Logger.getLogger("Test"), 8080, new File(System.getProperty("user.dir")));
-        server.start();
     }
 
     @Override
@@ -37,16 +33,11 @@ public class LootTables extends JavaPlugin {
             if (!lootTableFolder.exists()) {
                 lootTableFolder.mkdirs();
             }
-            server = new WebServer(getLogger(), getConfig().getInt("server.port", 8080), lootTableFolder);
-            server.start();
         }
     }
 
     @Override
     public void onDisable() {
-        if (server != null) {
-            server.stopServer();
-        }
     }
 
     /**

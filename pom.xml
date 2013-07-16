@@ -34,41 +34,10 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.5.2-R0.1-SNAPSHOT</version>
+            <version>1.6.2-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-            <version>12.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>9.0.0.M5</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <version>9.0.0.M5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-http</artifactId>
-            <version>9.0.0.M5</version>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>org.eclipse.jetty.orbit</groupId>
-            <artifactId>javax.servlet</artifactId>
-            <version>3.0.0.v201112011016</version>
-        </dependency>
-        -->
     </dependencies>
 
     <!-- Profiles are used to detect whether this is a local or Jenkins build and adjust the build number accordingly -->
@@ -206,25 +175,18 @@
                             <minimizeJar>true</minimizeJar>
                             <artifactSet>
                                 <includes>
-                                    <include>org.eclipse.jetty:jetty-server</include>
-                                    <include>org.eclipse.jetty:jetty-util</include>
-                                    <include>org.eclipse.jetty:jetty-http</include>
-                                    <include>org.eclipse.jetty:jetty-io</include>
-                                    <include>org.eclipse.jetty.orbit:javax.servlet</include>
+                                    <include>org.bukkit:bukkit</include>
                                 </includes>
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>org.eclipse.*:*</artifact>
-                                    <excludes>
-                                        <exclude>plugin.properties</exclude>
-                                        <exclude>jetty-dir.css</exclude>
-                                        <exclude>about.html</exclude>
-                                        <exclude>about_files/</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/*.inf</exclude>
-                                    </excludes>
+                                    <artifact>org.bukkit:bukkit</artifact>
+                                    <includes>
+                                        <include>org.bukkit.configuration.*</include>
+                                        <include>org.bukkit.inventory.Item*</include>
+                                        <include>org.bukkit.Material</include>
+                                        <include>org.bukkit.inventory.meta.*</include>
+                                    </includes>
                                 </filter>
                             </filters>
                         </configuration>
