@@ -45,6 +45,13 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>4.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <!-- Profiles are used to detect whether this is a local or Jenkins build and adjust the build number accordingly -->
@@ -183,6 +190,8 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.bukkit:bukkit</include>
+                                    <include>com.miglayout:miglayout-core</include>
+                                    <include>com.miglayout:miglayout-swing</include>
                                 </includes>
                             </artifactSet>
                             <filters>
