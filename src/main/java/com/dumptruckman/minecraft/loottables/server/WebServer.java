@@ -4,6 +4,7 @@ import org.eclipse.jetty.server.HttpConfiguration.ConnectionFactory;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,14 @@ public class WebServer extends Thread {
         connector.setPort(port);
         connector.setIdleTimeout(30000);
         server.addConnector(connector);
-        server.setHandler(new WebRequestHandler(lootTableFolder));
+
+        ContextHandler contextHandler = new ContextHandler();
+        contextHandler.setContextPath("/");
+        //contextHandler.setContextPath(".");
+        contextHandler.setResourceBase(new File(LootTablesApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent());
+        contextHandler.setClassLoader(Thread.currentThread().getContextClassLoader());
+        contextHandler.setHandler(new WebRequestHandler(lootTableFolder));
+        server.setHandler(contextHandler);
     }
 
     public void run() {
