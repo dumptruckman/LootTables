@@ -11,7 +11,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
 public class LootTables extends JavaPlugin {
@@ -19,10 +18,7 @@ public class LootTables extends JavaPlugin {
     private LootConfig loot;
 
     public static void main(String[] args) {
-        int magic = 1008813135;
-        ByteBuffer b = ByteBuffer.allocate(4);
-        b.putInt(magic);
-        System.out.println(new String(b.array()));
+
     }
 
     @Override

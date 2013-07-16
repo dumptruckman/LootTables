@@ -189,10 +189,12 @@
                                 <filter>
                                     <artifact>org.bukkit:bukkit</artifact>
                                     <includes>
-                                        <include>org.bukkit.configuration.*</include>
-                                        <include>org.bukkit.inventory.Item*</include>
-                                        <include>org.bukkit.Material</include>
-                                        <include>org.bukkit.inventory.meta.*</include>
+                                        <include>org/bukkit/configuration/*</include>
+                                        <include>org/bukkit/configuration/file/*</include>
+                                        <include>org/bukkit/configuration/serialization/*</include>
+                                        <include>org/bukkit/inventory/Item*</include>
+                                        <include>org/bukkit/Material.class</include>
+                                        <include>org/bukkit/inventory/meta/*</include>
                                     </includes>
                                 </filter>
                             </filters>
