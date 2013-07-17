@@ -55,8 +55,7 @@ class MaterialTableModel extends DefaultTableModel {
                     }
                 } catch (PatternSyntaxException e) {
                     textField.setToolTipText(e.getMessage());
-                    JComponent component = textField;
-                    MouseEvent phantom = new MouseEvent(component, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 10, 10, 0, false);
+                    MouseEvent phantom = new MouseEvent(textField, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 10, 10, 0, false);
                     ToolTipManager.sharedInstance().mouseMoved(phantom);
                 }
                 textField.setToolTipText(initialToolTip);
