@@ -52,7 +52,7 @@ public class EditorGui extends JFrame implements WindowListener {
 
     public EditorGui() {
 
-        lootTreeModel = new LootTreeModel(new DefaultMutableTreeNode());
+        lootTreeModel = LootTreeModel.generateBlankModel();
 
         setTitle("LootTables Editor");
         setSize(700, 500);
@@ -158,20 +158,7 @@ public class EditorGui extends JFrame implements WindowListener {
                 return true;
             }
         });
-        textFieldTableName.getDocument().addDocumentListener(new DocumentListener() {
 
-            @Override
-            public void insertUpdate(DocumentEvent evt) {
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent evt) {
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent evt) {
-            }
-        });
         JLabel label = new JLabel("Name:");
         label.setLabelFor(textFieldTableName);
         panelMain.add(label);
@@ -189,7 +176,29 @@ public class EditorGui extends JFrame implements WindowListener {
         panelMain.add(buttonChangeSaveLocation, "wrap");
 
         JPanel panel = new JPanel(new MigLayout("fill", "[50%][50%]", "[grow][]"));
-        treeLootTable = new JTree();
+        treeLootTable = new JTree(lootTreeModel);
+        textFieldTableName.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void updateTree() {
+                lootTreeModel.getRoot().getUserObject().setName(textFieldTableName.getText());
+                treeLootTable.updateUI();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent evt) {
+                updateTree();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent evt) {
+                updateTree();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent evt) {
+                updateTree();
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(treeLootTable);
         panel.add(scrollPane, "span 2,grow,wrap");
         buttonAddSection = new JButton("Add");

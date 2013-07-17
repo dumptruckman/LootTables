@@ -25,7 +25,6 @@ public class LootTable extends ItemSection {
 
     private static final int ARRAY_SIZE = 64;
 
-
     private Random randGen = new Random(System.currentTimeMillis());
 
     public LootTable(@NotNull final String name, @NotNull final ConfigurationSection section, @NotNull final Logger log) {
