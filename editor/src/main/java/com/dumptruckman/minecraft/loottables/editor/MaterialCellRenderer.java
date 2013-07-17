@@ -3,10 +3,8 @@ package com.dumptruckman.minecraft.loottables.editor;
 import org.bukkit.Material;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.util.regex.Pattern;
 
 class MaterialCellRenderer extends JLabel implements TableCellRenderer {
 

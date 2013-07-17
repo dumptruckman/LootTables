@@ -4,11 +4,7 @@ import org.bukkit.Material;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.PatternSyntaxException;
 
 class MaterialTableModel extends DefaultTableModel {

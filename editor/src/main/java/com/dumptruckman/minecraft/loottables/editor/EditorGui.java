@@ -8,15 +8,9 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.regex.PatternSyntaxException;
-
 
 public class EditorGui extends JFrame implements WindowListener {
 
@@ -27,6 +21,10 @@ public class EditorGui extends JFrame implements WindowListener {
     private final JTree treeLootTable;
     private final JTable tableMaterial;
     private final JTextField textFieldMaterialFilter;
+
+    private final JButton buttonAddSection;
+    private final JButton buttonRemoveSection;
+    private final JButton buttonAddMaterial;
 
     public EditorGui() {
         setTitle("LootTables Editor");
@@ -144,10 +142,14 @@ public class EditorGui extends JFrame implements WindowListener {
         panelMain.add(label);
         panelMain.add(textFieldFileName, "grow,wrap");
 
-        JPanel panel = new JPanel(new MigLayout("fill"));
+        JPanel panel = new JPanel(new MigLayout("fill", "[50%][50%]", ""));
         treeLootTable = new JTree();
         JScrollPane scrollPane = new JScrollPane(treeLootTable);
-        panel.add(scrollPane, "grow");
+        panel.add(scrollPane, "span 2,grow,wrap");
+        buttonAddSection = new JButton("+");
+        buttonRemoveSection = new JButton("-");
+        panel.add(buttonAddSection, "growx");
+        panel.add(buttonRemoveSection, "growx");
         panelMain.add(panel, "span 3,grow");
 
         panel = new JPanel(new MigLayout("fill", "[][grow]", "[][grow]"));
@@ -192,7 +194,9 @@ public class EditorGui extends JFrame implements WindowListener {
             }
         });
         scrollPane = new JScrollPane(tableMaterial);
-        panel.add(scrollPane, "grow,span 2");
+        panel.add(scrollPane, "grow,span 2,wrap");
+        buttonAddMaterial = new JButton("Add & Customize");
+        panel.add(buttonAddMaterial, "span 2,growx");
         panelMain.add(panel, "grow");
 
         add(panelMain);
