@@ -35,12 +35,12 @@ class MaterialCellRenderer extends JLabel implements TableCellRenderer {
     private Component showItem(final JTable table, final String name, boolean isSelected) {
         setText(name);
         if (isSelected) {
-            setBackground(javax.swing.UIManager.getDefaults().getColor("Table[Selected].textBackground"));
-            setForeground(javax.swing.UIManager.getDefaults().getColor("Table[Selected].textForeground"));
+            setBackground(javax.swing.UIManager.getDefaults().getColor("List[Selected].textBackground"));
+            setForeground(javax.swing.UIManager.getDefaults().getColor("List[Selected].textForeground"));
             setOpaque(true);
         } else {
-            setBackground(javax.swing.UIManager.getDefaults().getColor("Table.background"));
-            setForeground(javax.swing.UIManager.getDefaults().getColor("Table.foreground"));
+            setBackground(javax.swing.UIManager.getDefaults().getColor("List.background"));
+            setForeground(javax.swing.UIManager.getDefaults().getColor("List.foreground"));
             setOpaque(false);
         }
         setFont(table.getFont());
