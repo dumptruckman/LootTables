@@ -154,7 +154,8 @@ public class EditorGui extends JFrame implements WindowListener {
         textFieldMaterialFilter = new JTextField("");
         label = new JLabel("Filter:");
         panel.add(label);
-        label.setLabelFor(textFieldFileName);
+        label.setLabelFor(textFieldMaterialFilter);
+        textFieldMaterialFilter.setToolTipText("Enter a filter to easily find the material you are looking for.  This field accepts regex strings.");
         panel.add(textFieldMaterialFilter, "growx,wrap");
 
         MaterialTableModel tableModel = new MaterialTableModel();

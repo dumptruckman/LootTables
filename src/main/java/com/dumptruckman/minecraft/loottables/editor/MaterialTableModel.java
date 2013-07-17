@@ -5,6 +5,9 @@ import org.bukkit.Material;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.regex.PatternSyntaxException;
 
@@ -27,9 +30,11 @@ class MaterialTableModel extends DefaultTableModel {
     static class TextFieldRegexFilter extends RowFilter<MaterialTableModel, Integer> {
 
         private final JTextField textField;
+        private final String initialToolTip;
 
         TextFieldRegexFilter(final JTextField textField) {
             this.textField = textField;
+            this.initialToolTip = textField.getToolTipText();
         }
 
         @Override
@@ -40,13 +45,21 @@ class MaterialTableModel extends DefaultTableModel {
             } else {
                 try {
                     if (RowFilter.regexFilter("(?i)" + text, 0).include(entry)) {
+                        textField.setToolTipText(initialToolTip);
                         return true;
                     }
                     Material material = (Material) entry.getModel().getValueAt(entry.getIdentifier(), 0);
-                    return material != null && String.valueOf(material.getId()).startsWith(text);
+                    if (material != null && String.valueOf(material.getId()).startsWith(text)) {
+                        textField.setToolTipText(initialToolTip);
+                        return true;
+                    }
                 } catch (PatternSyntaxException e) {
-                    e.printStackTrace();
+                    textField.setToolTipText(e.getMessage());
+                    JComponent component = textField;
+                    MouseEvent phantom = new MouseEvent(component, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 10, 10, 0, false);
+                    ToolTipManager.sharedInstance().mouseMoved(phantom);
                 }
+                textField.setToolTipText(initialToolTip);
                 return false;
             }
         }
