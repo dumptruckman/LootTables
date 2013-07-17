@@ -19,20 +19,6 @@ public class LootTables extends JavaPlugin {
 
     private LootConfig loot;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
-
-    private static void createAndShowGUI() {
-        EditorGui gui = new EditorGui();
-        gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        gui.setVisible(true);
-    }
-
     @Override
     public void onEnable() {
         loot = newLootConfig(this, getLogger());

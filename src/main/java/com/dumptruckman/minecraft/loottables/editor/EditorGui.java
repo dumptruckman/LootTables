@@ -6,24 +6,27 @@ import org.bukkit.Material;
 import javax.swing.*;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.regex.PatternSyntaxException;
 
 
 public class EditorGui extends JFrame implements WindowListener {
 
-    private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow,50%][][grow]", "[][grow][]"));
+    private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow,40%][][grow]", "[][grow][]"));
 
     private final JFormattedTextField textFieldTableName;
     private final JTextField textFieldFileName;
     private final JTree treeLootTable;
-    private final JList<Material> listMaterial;
+    private final JTable tableMaterial;
+    private final JTextField textFieldMaterialFilter;
 
     public EditorGui() {
         setTitle("LootTables Editor");
@@ -147,15 +150,48 @@ public class EditorGui extends JFrame implements WindowListener {
         panel.add(scrollPane, "grow");
         panelMain.add(panel, "span 3,grow");
 
-        panel = new JPanel(new MigLayout("fill"));
-        DefaultListModel<Material> listModel = new DefaultListModel<Material>();
-        for (Material material : Material.values()) {
-            listModel.addElement(material);
-        }
-        listMaterial = new JList<Material>(listModel);
-        scrollPane = new JScrollPane(listMaterial);
-        listMaterial.setCellRenderer(new MaterialCellRenderer());
-        panel.add(scrollPane, "grow");
+        panel = new JPanel(new MigLayout("fill", "[][grow]", "[][grow]"));
+        textFieldMaterialFilter = new JTextField("");
+        label = new JLabel("Filter:");
+        panel.add(label);
+        label.setLabelFor(textFieldFileName);
+        panel.add(textFieldMaterialFilter, "growx,wrap");
+
+        MaterialTableModel tableModel = new MaterialTableModel();
+        tableModel.addColumn("Material", Material.values());
+        tableMaterial = new JTable() {
+            private final MaterialCellRenderer renderer = new MaterialCellRenderer();
+            public MaterialCellRenderer getCellRenderer(int row, int column) {
+                return renderer;
+            }
+        };
+        tableMaterial.setModel(tableModel);
+        final TableRowSorter<MaterialTableModel> sorter = new TableRowSorter<MaterialTableModel>(tableModel);
+        final MaterialTableModel.TextFieldRegexFilter filter = new MaterialTableModel.TextFieldRegexFilter(textFieldMaterialFilter);
+        tableMaterial.setRowSorter(sorter);
+        textFieldMaterialFilter.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void searchFieldChangedUpdate(DocumentEvent evt) {
+                sorter.setRowFilter(filter);
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+        });
+        scrollPane = new JScrollPane(tableMaterial);
+        panel.add(scrollPane, "grow,span 2");
         panelMain.add(panel, "grow");
 
         add(panelMain);
