@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package com.dumptruckman.minecraft.loottables.plugin;
 
+import com.dumptruckman.minecraft.loottables.LootConfig;
+import com.dumptruckman.minecraft.loottables.LootTable;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,7 +12,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.logging.Logger;
 
@@ -45,7 +46,7 @@ public class LootTables extends JavaPlugin {
         if (command.getName().equals("loot")) {
 
         } else if (command.getName().equals("lootreload")) {
-            loot = new DefaultLootConfig(this, getLogger());
+            loot = new LootConfig(this, getLogger());
             sender.sendMessage(ChatColor.DARK_GREEN + "=== Reloaded LootTables! ===");
         }
         return true;
@@ -60,7 +61,7 @@ public class LootTables extends JavaPlugin {
      * @return a new LootTable.
      */
     public static LootTable newLootTable(String name, ConfigurationSection config, Logger log) {
-        return new DefaultLootTable(name, config, log);
+        return new LootTable(name, config, log);
     }
 
     /**
@@ -75,7 +76,7 @@ public class LootTables extends JavaPlugin {
      * @return a new LootConfig.
      */
     public static LootConfig newLootConfig(Plugin plugin, Logger log) {
-        return new DefaultLootConfig(plugin, log);
+        return new LootConfig(plugin, log);
     }
 
     /**
@@ -92,6 +93,6 @@ public class LootTables extends JavaPlugin {
      * @return a new LootConfig.
      */
     public static LootConfig newLootConfig(Plugin plugin, File lootTableFile, File exampleFile, File lootFolder, Logger log) {
-        return new DefaultLootConfig(plugin, lootTableFile, exampleFile, lootFolder, log);
+        return new LootConfig(plugin, lootTableFile, exampleFile, lootFolder, log);
     }
 }

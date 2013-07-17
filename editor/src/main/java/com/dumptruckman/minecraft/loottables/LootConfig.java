@@ -1,10 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package com.dumptruckman.minecraft.loottables.plugin;
+package com.dumptruckman.minecraft.loottables;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +18,15 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
-class DefaultLootConfig implements LootConfig {
+/**
+ * An interface for retrieving a loot table from loot_tables.yml or from an individual loot table file.
+ */
+public class LootConfig {
 
     @NotNull
     private final Logger log;
     @NotNull
-    private final FileConfiguration config;
+    private final org.bukkit.configuration.file.FileConfiguration config;
 
     @NotNull
     private final File lootFolder;
@@ -33,13 +35,13 @@ class DefaultLootConfig implements LootConfig {
 
     private Map<String, LootTable> cachedTables = new WeakHashMap<String, LootTable>();
 
-    DefaultLootConfig(@NotNull final Plugin plugin, @NotNull final Logger log) {
+    public LootConfig(@NotNull final Plugin plugin, @NotNull final Logger log) {
         this(plugin, new File(plugin.getDataFolder(), "loot_tables.yml"),
                 new File(plugin.getDataFolder(), "loot_example.yml"),
                 new File(plugin.getDataFolder(), "loot_tables"), log);
     }
 
-    DefaultLootConfig(@NotNull final Plugin plugin, @NotNull final File lootTableFile, @NotNull final File exampleFile, @NotNull final File lootFolder, @Nullable final Logger log) {
+    public LootConfig(@NotNull final Plugin plugin, @NotNull final File lootTableFile, @NotNull final File exampleFile, @NotNull final File lootFolder, @Nullable final Logger log) {
         if (log == null) {
             this.log = Logger.getLogger("Minecraft.LootTables");
         } else {
@@ -81,7 +83,12 @@ class DefaultLootConfig implements LootConfig {
         }
     }
 
-    @Override
+    /**
+     * Retrieves the loot table with the specified name.
+     *
+     * @param name The name of the loot table to retrieve.
+     * @return The loot table by that name or null if none found.
+     */
     public LootTable getLootTable(String name) {
         if (name.isEmpty()) {
             return null;
@@ -104,7 +111,7 @@ class DefaultLootConfig implements LootConfig {
                 return null;
             }
         }
-        LootTable newTable = new DefaultLootTable(name, section, log);
+        LootTable newTable = new LootTable(name, section, log);
         cachedTables.put(name, newTable);
         log.fine("Loaded loot table from config.");
         return newTable;

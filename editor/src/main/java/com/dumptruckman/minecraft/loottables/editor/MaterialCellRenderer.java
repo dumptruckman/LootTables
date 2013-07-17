@@ -2,9 +2,10 @@ package com.dumptruckman.minecraft.loottables.editor;
 
 import org.bukkit.Material;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
+import java.awt.Component;
 
 class MaterialCellRenderer extends JLabel implements TableCellRenderer {
 

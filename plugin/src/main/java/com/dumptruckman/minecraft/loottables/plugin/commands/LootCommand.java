@@ -1,6 +1,5 @@
 package com.dumptruckman.minecraft.loottables.plugin.commands;
 
-import com.dumptruckman.minecraft.loottables.plugin.LootTable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

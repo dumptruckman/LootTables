@@ -2,7 +2,9 @@ package com.dumptruckman.minecraft.loottables.editor;
 
 import org.bukkit.Material;
 
-import javax.swing.*;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseEvent;
 import java.util.regex.PatternSyntaxException;

@@ -1,7 +1,11 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 public class TestPanel extends JPanel {
 

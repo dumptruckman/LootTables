@@ -1,6 +1,7 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 public class Main {
 

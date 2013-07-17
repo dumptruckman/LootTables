@@ -1,5 +1,6 @@
 package com.dumptruckman.minecraft.loottables.plugin;
 
+import com.dumptruckman.minecraft.loottables.LootTable;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
