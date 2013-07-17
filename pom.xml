@@ -89,8 +89,10 @@
                 <version>2.3.1</version>
                 <configuration>
                     <archive>
-                        <manifestEntries>
-                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.dumptruckman.minecraft.loottables.editor.Main</mainClass>
+                        </manifest>
                     </archive>
                 </configuration>
             </plugin>
@@ -203,6 +205,8 @@
                                         <include>org/bukkit/configuration/serialization/*</include>
                                         <include>org/bukkit/inventory/Item*</include>
                                         <include>org/bukkit/Material.class</include>
+                                        <include>org/bukkit/material/*</include>
+                                        <include>org/bukkit/TreeSpecies.class</include>
                                         <include>org/bukkit/inventory/meta/*</include>
                                     </includes>
                                 </filter>
