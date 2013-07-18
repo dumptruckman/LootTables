@@ -81,21 +81,7 @@ public class LootSection {
                         // It's an item section.
                         lootSection = createLootSectionFromConfigurationSection(key, loot.log, newSection);
                     }
-                    // Add the new LootSection to the chance map.
-                    Set<LootSection> sectionSet = loot.sectionMap.get(lootSection.getChance());
-                    if (sectionSet == null) {
-                        sectionSet = new LinkedHashSet<LootSection>();
-                        loot.sectionMap.put(lootSection.getChance(), sectionSet);
-                    }
-                    loot.log.finer("Adding section '" + lootSection + "' to section '" + loot + "' with chance '"
-                            + lootSection.getChance() + "' increasing total weight of '" + loot + "' to "
-                            + loot.totalWeight);
-                    sectionSet.add(lootSection);
-                    // Increase the total weight of the current section for split picking.
-                    // Only increase if parent and child are both item or enchant sections.
-                    if (lootSection.getClass().equals(loot.getClass())) {
-                        loot.totalWeight += lootSection.getChance();
-                    }
+                    loot.addSection(lootSection);
                 } else {
                     loot.log.warning("Could not parse section: " + key);
                 }
@@ -131,6 +117,27 @@ public class LootSection {
     public LootSection(@NotNull final String name, @NotNull final Logger log) {
         this.name = name;
         this.log = log;
+    }
+
+    public void addSection(@NotNull final LootSection sectionToAdd) {
+        if (!(this instanceof EnchantSection) && sectionToAdd instanceof EnchantSection) {
+            this.enchantSection = (EnchantSection) sectionToAdd;
+        }
+        // Add the new LootSection to the chance map.
+        Set<LootSection> sectionSet = sectionMap.get(sectionToAdd.getChance());
+        if (sectionSet == null) {
+            sectionSet = new LinkedHashSet<LootSection>();
+            sectionMap.put(sectionToAdd.getChance(), sectionSet);
+        }
+        log.finer("Adding section '" + sectionToAdd + "' to section '" + this + "' with chance '"
+                + sectionToAdd.getChance() + "' increasing total weight of '" + this + "' to "
+                + totalWeight);
+        sectionSet.add(sectionToAdd);
+        // Increase the total weight of the current section for split picking.
+        // Only increase if parent and child are both item or enchant sections.
+        if (sectionToAdd.getClass().equals(getClass())) {
+            totalWeight += sectionToAdd.getChance();
+        }
     }
 
     /**

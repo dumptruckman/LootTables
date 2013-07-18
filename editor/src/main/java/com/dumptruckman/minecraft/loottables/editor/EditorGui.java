@@ -38,13 +38,14 @@ public class EditorGui extends JFrame implements WindowListener {
     private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow,40%][][grow][]", "[][grow][]"));
 
     private final JFormattedTextField textFieldTableName;
-    private final JTextField textFieldFileName;
+    //private final JTextField textFieldFileName;
     private final JTree treeLootTable;
     private final JTable tableMaterial;
     private final JTextField textFieldMaterialFilter;
 
-    private final JButton buttonChangeSaveLocation;
+    //private final JButton buttonChangeSaveLocation;
     private final JButton buttonAddSection;
+    private final JButton buttonEditSection;
     private final JButton buttonRemoveSection;
     private final JButton buttonAddMaterial;
 
@@ -91,13 +92,11 @@ public class EditorGui extends JFrame implements WindowListener {
         saveMenuItem.setToolTipText("Saves the currently opened LootTable for later use.");
         fileMenu.add(saveMenuItem);
 
-        /*
         JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
         saveAsMenuItem.setMnemonic('A');
         saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke("control alt S"));
         saveAsMenuItem.setToolTipText("Saves the currently opened LootTable for later use with a specified file name.");
         fileMenu.add(saveAsMenuItem);
-        */
 
         JMenuItem quitMenuItem = new JMenuItem("Exit");
         quitMenuItem.setMnemonic('x');
@@ -162,8 +161,9 @@ public class EditorGui extends JFrame implements WindowListener {
         JLabel label = new JLabel("Name:");
         label.setLabelFor(textFieldTableName);
         panelMain.add(label);
-        panelMain.add(textFieldTableName, "grow");
+        panelMain.add(textFieldTableName, "grow,span 3,wrap");
 
+        /*
         textFieldFileName = new JTextField();
         textFieldFileName.setEditable(false);
         textFieldFileName.setFocusable(false);
@@ -174,9 +174,11 @@ public class EditorGui extends JFrame implements WindowListener {
 
         buttonChangeSaveLocation = new JButton("Change");
         panelMain.add(buttonChangeSaveLocation, "wrap");
+        */
 
-        JPanel panel = new JPanel(new MigLayout("fill", "[50%][50%]", "[grow][]"));
+        JPanel panel = new JPanel(new MigLayout("fill", "[50%][50%][50%]", "[grow][]"));
         treeLootTable = new JTree(lootTreeModel);
+        treeLootTable.setCellRenderer(new LootSectionTreeCellRenderer());
         textFieldTableName.getDocument().addDocumentListener(new DocumentListener() {
 
             private void updateTree() {
@@ -200,10 +202,12 @@ public class EditorGui extends JFrame implements WindowListener {
             }
         });
         JScrollPane scrollPane = new JScrollPane(treeLootTable);
-        panel.add(scrollPane, "span 2,grow,wrap");
+        panel.add(scrollPane, "span 3,grow,wrap");
         buttonAddSection = new JButton("Add");
+        buttonEditSection = new JButton("Edit");
         buttonRemoveSection = new JButton("Remove");
         panel.add(buttonAddSection, "growx");
+        panel.add(buttonEditSection, "growx");
         panel.add(buttonRemoveSection, "growx");
         panelMain.add(panel, "span 3,grow");
 

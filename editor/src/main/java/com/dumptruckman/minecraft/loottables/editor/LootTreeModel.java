@@ -1,6 +1,7 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
 import com.dumptruckman.minecraft.loottables.ItemSection;
+import com.dumptruckman.minecraft.loottables.LootTable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -10,7 +11,7 @@ import java.util.logging.Logger;
 public class LootTreeModel extends DefaultTreeModel {
 
     public static LootTreeModel generateBlankModel() {
-        return new LootTreeModel(new LootSectionTreeNode(new ItemSection("", Logger.getLogger("LootTableLogger"))));
+        return new LootTreeModel(new LootSectionTreeNode(new LootTable("", Logger.getLogger("LootTableLogger"))));
     }
 
     LootTreeModel(final TreeNode root) {

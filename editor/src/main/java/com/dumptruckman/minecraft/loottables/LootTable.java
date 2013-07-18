@@ -32,6 +32,10 @@ public class LootTable extends ItemSection {
         createLootSectionFromConfigurationSection(this, section, null);
     }
 
+    public LootTable(@NotNull final String name, @NotNull final Logger log) {
+        super(name, log);
+    }
+
     /**
      * Adds the loot table to an inventory.
      *

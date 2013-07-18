@@ -100,4 +100,16 @@ public class LootSectionTreeNode extends DefaultMutableTreeNode {
     public LootSectionTreeNode getPreviousLeaf() {
         return (LootSectionTreeNode) super.getPreviousLeaf();
     }
+
+    @Override
+    public String toString() {
+        LootSectionTreeNode parent = getParent();
+        double chance;
+        if (parent != null && parent.getUserObject().isSplit()) {
+            chance = (getUserObject().getChance() / parent.getUserObject().getTotalWeight()) * 100;
+        } else {
+            chance = getUserObject().getChance() * 100;
+        }
+        return getUserObject().getSectionName() + " - Chance: " + chance + "%";
+    }
 }
