@@ -1,13 +1,11 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
+import com.dumptruckman.minecraft.loottables.LootSection;
 import net.miginfocom.swing.MigLayout;
 import org.bukkit.Material;
 
-import javax.swing.InputVerifier;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -24,16 +22,15 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.text.ParseException;
+import java.util.logging.Logger;
 
-public class EditorGui extends JFrame implements WindowListener {
+public class EditorFrame extends JFrame implements WindowListener {
 
     private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow,40%][][grow][]", "[][grow][]"));
 
@@ -51,7 +48,7 @@ public class EditorGui extends JFrame implements WindowListener {
 
     private LootTreeModel lootTreeModel;
 
-    public EditorGui() {
+    public EditorFrame() {
 
         lootTreeModel = LootTreeModel.generateBlankModel();
 
@@ -104,7 +101,7 @@ public class EditorGui extends JFrame implements WindowListener {
         quitMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                dispatchEvent(new WindowEvent(EditorGui.this, WindowEvent.WINDOW_CLOSING));
+                dispatchEvent(new WindowEvent(EditorFrame.this, WindowEvent.WINDOW_CLOSING));
             }
         });
         fileMenu.add(quitMenuItem);
@@ -112,51 +109,8 @@ public class EditorGui extends JFrame implements WindowListener {
         setJMenuBar(menuBar);
 
         // Begin layout
-        textFieldTableName = new JFormattedTextField(new AbstractFormatter() {
-            @Override
-            public Object stringToValue(final String text) throws ParseException {
-                for (int i = 0; i < text.length(); i++) {
-                    char c = text.charAt(i);
-                    if (c < 32
-                            || c == '\\'
-                            || c == '/'
-                            || c == ':'
-                            || c == '*'
-                            || c == '?'
-                            || c == '"'
-                            || c == '<'
-                            || c == '>'
-                            || c == '|') {
-                        throw new ParseException("Unnacceptable input '" + c + "' in text", i);
-                    }
-                }
-                return text;
-            }
-
-            @Override
-            public String valueToString(final Object value) throws ParseException {
-                return value == null ? "" : value.toString();
-            }
-        });
-        textFieldTableName.setInputVerifier(new InputVerifier() {
-            @Override
-            public boolean verify(final JComponent input) {
-                if (input instanceof JFormattedTextField) {
-                    JFormattedTextField ftf = (JFormattedTextField)input;
-                    AbstractFormatter formatter = ftf.getFormatter();
-                    if (formatter != null) {
-                        String text = ftf.getText();
-                        try {
-                            formatter.stringToValue(text);
-                            return true;
-                        } catch (ParseException pe) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-        });
+        textFieldTableName = new JFormattedTextField(new FileNameFormatter());
+        textFieldTableName.setInputVerifier(new FileNameInputVerifier());
 
         JLabel label = new JLabel("Name:");
         label.setLabelFor(textFieldTableName);
@@ -204,6 +158,12 @@ public class EditorGui extends JFrame implements WindowListener {
         JScrollPane scrollPane = new JScrollPane(treeLootTable);
         panel.add(scrollPane, "span 3,grow,wrap");
         buttonAddSection = new JButton("Add");
+        buttonAddSection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                // TODO Add editor dialog
+            }
+        });
         buttonEditSection = new JButton("Edit");
         buttonRemoveSection = new JButton("Remove");
         panel.add(buttonAddSection, "growx");

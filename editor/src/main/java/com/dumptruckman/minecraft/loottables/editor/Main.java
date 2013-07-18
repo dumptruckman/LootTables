@@ -14,7 +14,7 @@ public class Main {
     }
 
     private static void createAndShowGUI() {
-        EditorGui gui = new EditorGui();
+        EditorFrame gui = new EditorFrame();
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setVisible(true);
     }
