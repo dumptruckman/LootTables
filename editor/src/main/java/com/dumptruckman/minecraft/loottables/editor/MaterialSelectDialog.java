@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,9 +29,10 @@ public class MaterialSelectDialog extends JDialog {
 
     private Material selection = null;
 
-    public MaterialSelectDialog(@NotNull final LootSection lootSection) {
+    public MaterialSelectDialog(final Component parent) {
         super((Frame) null, true);
         setSize(300, 400);
+        setLocationRelativeTo(parent);
         setResizable(false);
         setModalityType(ModalityType.APPLICATION_MODAL);
 
