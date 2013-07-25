@@ -192,6 +192,18 @@ public class EditorFrame extends JFrame implements WindowListener {
             }
         });
         buttonEditSection = new JButton("Edit");
+        buttonEditSection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                LootSectionTreeNode node = (LootSectionTreeNode) treeLootTable.getLastSelectedPathComponent();
+                LootSection section = null;
+                if (node != null) {
+                    section = node.getUserObject();
+                }
+                LootSectionEditDialog editDialog = new LootSectionEditDialog(EditorFrame.this, section);
+                editDialog.showDialog();
+            }
+        });
         buttonRemoveSection = new JButton("Remove");
         panel.add(buttonAddSection, "growx");
         panel.add(buttonEditSection, "growx");
