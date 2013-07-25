@@ -1,5 +1,7 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
+import com.dumptruckman.minecraft.loottables.LootSection;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import org.bukkit.Material;
 
@@ -12,16 +14,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableRowSorter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -30,22 +32,24 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class EditorFrame extends JFrame implements WindowListener {
 
-    private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow,40%][][grow][]", "[][grow][]"));
+    private final JPanel panelMain = new JPanel(new MigLayout("", "[][grow]", "[][grow 200][]"));
 
     private final JFormattedTextField textFieldTableName;
-    //private final JTextField textFieldFileName;
     private final JTree treeLootTable;
-    private final JTable tableMaterial;
-    private final JTextField textFieldMaterialFilter;
 
-    //private final JButton buttonChangeSaveLocation;
     private final JButton buttonAddSection;
     private final JButton buttonEditSection;
     private final JButton buttonRemoveSection;
-    private final JButton buttonAddMaterial;
+
+    private final JTextPane textPaneDebug;
+    private PrintStream oldOut;
+    private PrintStream oldErr;
 
     private LootTreeModel lootTreeModel;
 
@@ -54,7 +58,7 @@ public class EditorFrame extends JFrame implements WindowListener {
         lootTreeModel = LootTreeModel.generateBlankModel();
 
         setTitle("LootTables Editor");
-        setSize(700, 500);
+        setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         try {
@@ -109,6 +113,38 @@ public class EditorFrame extends JFrame implements WindowListener {
         });
         fileMenu.add(quitMenuItem);
 
+        // Set up file menu
+        JMenu helpMenu = new JMenu("Help");
+        fileMenu.setMnemonic('H');
+        menuBar.add(helpMenu);
+
+        final JMenuItem debugMenuItem = new JMenuItem("Enable Debug Output");
+        debugMenuItem.setMnemonic('D');
+        debugMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+        textPaneDebug = new JTextPane();
+        textPaneDebug.setEditable(false);
+        final JScrollPane debugScroll = new JScrollPane(textPaneDebug);
+        debugMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (debugMenuItem.getText().equals("Enable Debug Output")) {
+                    debugMenuItem.setText("Disable Debug Output");
+                    redirectSystemStreamsToDebug();
+                    debugScroll.setVisible(true);
+                    panelMain.add(debugScroll, "span 2,grow,height 100:300:600");
+                    debugMenuItem.revalidate();
+                    panelMain.revalidate();
+                } else {
+                    debugMenuItem.setText("Enable Debug Output");
+                    redirectSystemStreamsToConsole();
+                    debugScroll.setVisible(false);
+                    panelMain.remove(debugScroll);
+                    debugMenuItem.revalidate();
+                    panelMain.revalidate();
+                }
+            }
+        });
+        helpMenu.add(debugMenuItem);
         setJMenuBar(menuBar);
 
         // Begin layout
@@ -118,20 +154,7 @@ public class EditorFrame extends JFrame implements WindowListener {
         JLabel label = new JLabel("Name:");
         label.setLabelFor(textFieldTableName);
         panelMain.add(label);
-        panelMain.add(textFieldTableName, "grow,span 3,wrap");
-
-        /*
-        textFieldFileName = new JTextField();
-        textFieldFileName.setEditable(false);
-        textFieldFileName.setFocusable(false);
-        label = new JLabel("File:");
-        label.setLabelFor(textFieldFileName);
-        panelMain.add(label);
-        panelMain.add(textFieldFileName, "grow");
-
-        buttonChangeSaveLocation = new JButton("Change");
-        panelMain.add(buttonChangeSaveLocation, "wrap");
-        */
+        panelMain.add(textFieldTableName, "grow,span 2,wrap");
 
         JPanel panel = new JPanel(new MigLayout("fill", "[50%][50%][50%]", "[grow][]"));
         treeLootTable = new JTree(lootTreeModel);
@@ -164,7 +187,8 @@ public class EditorFrame extends JFrame implements WindowListener {
         buttonAddSection.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                // TODO Add editor dialog
+                LootSectionEditDialog editDialog = new LootSectionEditDialog(EditorFrame.this, null);
+                editDialog.showDialog();
             }
         });
         buttonEditSection = new JButton("Edit");
@@ -172,57 +196,53 @@ public class EditorFrame extends JFrame implements WindowListener {
         panel.add(buttonAddSection, "growx");
         panel.add(buttonEditSection, "growx");
         panel.add(buttonRemoveSection, "growx");
-        panelMain.add(panel, "span 3,grow");
-
-        panel = new JPanel(new MigLayout("fill", "[][grow]", "[][grow][]"));
-        textFieldMaterialFilter = new JTextField("");
-        label = new JLabel("Filter:");
-        panel.add(label);
-        label.setLabelFor(textFieldMaterialFilter);
-        textFieldMaterialFilter.setToolTipText("Enter a filter to easily find the material you are looking for.  This field accepts regex strings.");
-        panel.add(textFieldMaterialFilter, "growx,wrap");
-
-        MaterialTableModel tableModel = new MaterialTableModel();
-        tableModel.addColumn("Material", Material.values());
-        tableMaterial = new JTable() {
-            private final MaterialCellRenderer renderer = new MaterialCellRenderer();
-            public MaterialCellRenderer getCellRenderer(int row, int column) {
-                return renderer;
-            }
-        };
-        tableMaterial.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableMaterial.setModel(tableModel);
-        final TableRowSorter<MaterialTableModel> sorter = new TableRowSorter<MaterialTableModel>(tableModel);
-        final MaterialTableModel.TextFieldRegexFilter filter = new MaterialTableModel.TextFieldRegexFilter(textFieldMaterialFilter);
-        tableMaterial.setRowSorter(sorter);
-        textFieldMaterialFilter.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void searchFieldChangedUpdate(DocumentEvent evt) {
-                sorter.setRowFilter(filter);
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent evt) {
-                searchFieldChangedUpdate(evt);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent evt) {
-                searchFieldChangedUpdate(evt);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent evt) {
-                searchFieldChangedUpdate(evt);
-            }
-        });
-        scrollPane = new JScrollPane(tableMaterial);
-        panel.add(scrollPane, "grow,span 2,wrap");
-        buttonAddMaterial = new JButton("Add & Customize");
-        panel.add(buttonAddMaterial, "span 2,growx");
-        panelMain.add(panel, "span 2,grow");
+        panelMain.add(panel, "span 2,grow,wrap");
 
         add(panelMain);
+    }
+
+    private void updateDebugTextPane(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                Document doc = textPaneDebug.getDocument();
+                try {
+                    doc.insertString(doc.getLength(), text, null);
+                } catch (BadLocationException e) {
+                    throw new RuntimeException(e);
+                }
+                textPaneDebug.setCaretPosition(doc.getLength() - 1);
+            }
+        });
+    }
+
+    private void redirectSystemStreamsToDebug() {
+        oldOut = System.out;
+        oldErr = System.err;
+        OutputStream out = new OutputStream() {
+
+            @Override
+            public void write(final int b) throws IOException {
+                updateDebugTextPane(String.valueOf((char) b));
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                updateDebugTextPane(new String(b, off, len));
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+            write(b, 0, b.length);
+            }
+        };
+
+        System.setOut(new PrintStream(out, true));
+        System.setErr(new PrintStream(out, true));
+    }
+
+    private void redirectSystemStreamsToConsole() {
+        System.setOut(oldOut);
+        System.setErr(oldErr);
     }
 
     @Override
