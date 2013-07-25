@@ -16,15 +16,6 @@ class MaterialTableModel extends DefaultTableModel {
         return false;
     }
 
-    private static class NoRowFilter extends RowFilter<MaterialTableModel, Integer> {
-        @Override
-        public boolean include(final Entry<? extends MaterialTableModel, ? extends Integer> entry) {
-            return true;
-        }
-    }
-
-    static final NoRowFilter NO_ROW_FILTER = new NoRowFilter();
-
     static class TextFieldRegexFilter extends RowFilter<MaterialTableModel, Integer> {
 
         private final JTextField textField;
