@@ -1,6 +1,5 @@
 package com.dumptruckman.minecraft.loottables.editor;
 
-import com.dumptruckman.minecraft.loottables.LootSection;
 import net.miginfocom.swing.MigLayout;
 import org.bukkit.Material;
 
@@ -17,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.DocumentEvent;
@@ -28,7 +28,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.logging.Logger;
 
 public class EditorFrame extends JFrame implements WindowListener {
 
@@ -187,6 +186,7 @@ public class EditorFrame extends JFrame implements WindowListener {
                 return renderer;
             }
         };
+        tableMaterial.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableMaterial.setModel(tableModel);
         final TableRowSorter<MaterialTableModel> sorter = new TableRowSorter<MaterialTableModel>(tableModel);
         final MaterialTableModel.TextFieldRegexFilter filter = new MaterialTableModel.TextFieldRegexFilter(textFieldMaterialFilter);
